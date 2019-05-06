@@ -1,4 +1,4 @@
-# Wifi-Keyboard-Mouse-Android
+# Multi Tool App
 
 The android app used to control laptop/computer remotely. 
 
@@ -11,5 +11,3 @@ The android app used to control laptop/computer remotely.
 ## Usage
 
 The app provides a trackpad to control the mouse and a keyboard to control the laptop keyboard. You can scroll on screen using 2 fingure gesture. For right click option long press on the trackpad.
-
-See [Server code](https://github.com/AbhijitSinha1/Wifi-Keyboard-Mouse-Server) which allows the android app to control the laptop/computer remotely
