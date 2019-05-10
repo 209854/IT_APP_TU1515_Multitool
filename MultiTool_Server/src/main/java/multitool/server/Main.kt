@@ -68,6 +68,7 @@ object Main {
     }
 
     private fun process(json: JSONObject) {
+//        println(json)
         Thread {
             val type = json.getString("type")
             when (type) {
@@ -110,17 +111,21 @@ object Main {
                     val keyCode = value.getInt("keyCode")
                     if (keyCode != 0)
                     {
-                    val isShiftPressed = value.getBoolean("shift")
-                    val event = KeyEvent.getExtendedKeyCodeForChar(keyCode)
+                        val isShiftPressed = value.getBoolean("shift")
+                        val event = KeyEvent.getExtendedKeyCodeForChar(keyCode)
 
-                    if (isShiftPressed) {
-                        robot!!.keyPress(KeyEvent.VK_SHIFT)
+                        if (isShiftPressed) {
+                            robot!!.keyPress(KeyEvent.VK_SHIFT)
+                        }
+                        robot!!.keyPress(event)
+                        robot!!.keyRelease(event)
+                        if (isShiftPressed) {
+                            robot!!.keyRelease(KeyEvent.VK_SHIFT)
+                        }
                     }
-                    robot!!.keyPress(event)
-                    robot!!.keyRelease(event)
-                    if (isShiftPressed) {
-                        robot!!.keyRelease(KeyEvent.VK_SHIFT)
-                    }
+                    if (keyCode==0){
+                        robot?.keyPress(KeyEvent.VK_BACK_SPACE)
+                        robot?.keyRelease(KeyEvent.VK_BACK_SPACE)
                     }
                 }
             }

@@ -1,21 +1,15 @@
 package com.multitool.smartinput.wifikeyboardandmouse
 
 import android.content.Context
-import android.content.DialogInterface
+import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
 import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.Toast
-
 import com.multitool.smartinput.wifikeyboardandmouse.communication.MessageSender
 import com.multitool.smartinput.wifikeyboardandmouse.connector.ConnectionManager
 import com.multitool.smartinput.wifikeyboardandmouse.connector.ConnectionManagerListener
@@ -25,16 +19,18 @@ import com.multitool.smartinput.wifikeyboardandmouse.controller.impl.KeyValue
 import com.multitool.smartinput.wifikeyboardandmouse.utils.CommandQueue
 import com.multitool.smartinput.wifikeyboardandmouse.utils.GestureTap
 import com.multitool.smartinput.wifikeyboardandmouse.utils.Settings
+import kotlinx.android.synthetic.main.activity_fullscreen.*
 
 
-class FullscreenActivity : AppCompatActivity(), View.OnTouchListener, View.OnClickListener, DialogInterface.OnClickListener, ConnectionManagerListener {
+class FullscreenActivity : AppCompatActivity(),  ConnectionManagerListener {
 
     private val TAG = FullscreenActivity::class.java.canonicalName
     private var hostEditText: EditText? = null
     private var portEditText: EditText? = null
     private var connected: Boolean = false
-    private var context: Context? = null
-    private var detector: GestureDetector? = null
+    private lateinit var context: Context
+    private lateinit var detector: GestureDetector
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,50 +41,63 @@ class FullscreenActivity : AppCompatActivity(), View.OnTouchListener, View.OnCli
         val actionBar = supportActionBar
         actionBar?.hide()
 
-        val settings = findViewById<Button>(R.id.settings_button)
-        settings.setOnClickListener(this)
+        settings_button.setOnClickListener {
+            openSettingsDialog()
+        }
 
-        val keyboardSwitch = findViewById<Button>(R.id.keyboard_toggle)
-        keyboardSwitch.setOnClickListener(this)
+        keyboard_toggle.setOnClickListener {
+            toggleSoftKeyboard()
+        }
 
-        val touchscreen = findViewById<RelativeLayout>(R.id.touch_screen)
-        touchscreen.setOnTouchListener(this)
+        touch_screen.setOnTouchListener { _, event ->
+            if (connected) {
+                detector.onTouchEvent(event)
+            }
+            true
+        }
 
-        MessageSender.instance.init()
-        ConnectionManager.instanceOf.addConnectionManagerListener(this)
+        MessageSender.init()
+        ConnectionManager.addConnectionManagerListener(this)
     }
 
-    override fun onClick(view: View) {
-        val msg = String.format("click is happening on %s", view.id)
-        when (view.id) {
-            R.id.keyboard_toggle -> {
-                toggleSoftKeyboard()
+    private fun openSettingsDialog() {
+        val builder = AlertDialog.Builder(this@FullscreenActivity)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_settings, null)
+        val hostEditText: EditText = dialogView.findViewById(R.id.button_host)
+        val portEditText: EditText = dialogView.findViewById(R.id.button_port)
+
+        if (Settings.host != null && !Settings.host!!.isEmpty()) {
+            hostEditText.setText(Settings.host)
+        }
+        if (Settings.port != 0) {
+            portEditText.setText(String.format("%s", Settings.port))
+        }
+
+        if (connected) {
+            builder.setNegativeButton("Disconnect") { _, _ ->
+                ConnectionManager.disconnect()
             }
-            R.id.settings_button -> {
-                val builder = AlertDialog.Builder(this@FullscreenActivity)
-                val dialogView = layoutInflater.inflate(R.layout.dialog_settings, null)
-                hostEditText = dialogView.findViewById(R.id.button_host)
-                portEditText = dialogView.findViewById(R.id.button_port)
+        } else {
+            builder.setPositiveButton("Connect") { _, _ ->
+                connect(hostEditText.text.toString(), portEditText.text.toString())
 
-                if (Settings.instanceOf.host != null && !Settings.instanceOf.host!!.isEmpty()) {
-                    hostEditText!!.setText(Settings.instanceOf.host)
-                }
-                if (Settings.instanceOf.port != 0) {
-                    portEditText!!.setText(String.format("%s", Settings.instanceOf.port))
-                }
-
-                if (connected) {
-                    builder.setNegativeButton("Disconnect", this)
-                } else {
-                    builder.setPositiveButton("Connect", this)
-                }
-                builder.setNeutralButton("Cancel", this)
-                builder.setView(dialogView)
-                builder.setCancelable(false)
-                builder.show()
             }
         }
-        Log.i(TAG, msg)
+        builder.setNeutralButton("Cancel") { _, _ -> }
+        builder.setView(dialogView)
+        builder.setCancelable(false)
+        builder.show()
+    }
+
+    private fun connect(host: String, portString: String) {
+
+        if (host.isEmpty() || portString.isEmpty()) {
+            return
+        }
+        val port = portString.toInt()
+        Settings.host = host
+        Settings.port = port
+        ConnectionManager.attemptConnection()
     }
 
     private fun toggleSoftKeyboard() {
@@ -97,41 +106,14 @@ class FullscreenActivity : AppCompatActivity(), View.OnTouchListener, View.OnCli
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        Log.i(TAG, "onKeyDown: ${keyCode}, ${event}")
+        Log.i(TAG, "of: ${event.unicodeChar}")
+
         if (connected) {
-            CommandQueue.instance.push(Command.of(CommandType.KEYBOARD_INPUT, KeyValue.of(event)))
+
+            CommandQueue.push(Command.of(CommandType.KEYBOARD_INPUT, KeyValue.of(event)))
         }
         return super.onKeyDown(keyCode, event)
-    }
-
-    override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
-
-        if (connected) {
-            detector!!.onTouchEvent(motionEvent)
-        }
-
-        return true
-    }
-
-    override fun onClick(dialogInterface: DialogInterface, i: Int) {
-        Log.i(TAG, "I: $i")
-        when (i) {
-            -1 -> {
-                // positive
-                val host = hostEditText!!.text.toString()
-                val portString = portEditText!!.text.toString()
-                if (host.isEmpty() || portString.isEmpty()) {
-                    return
-                }
-                val port = Integer.parseInt(portString)
-                Settings.instanceOf.host = host
-                Settings.instanceOf.port = port
-                ConnectionManager.instanceOf.attemptConnection()
-            }
-            -2 -> {
-                // negative
-                ConnectionManager.instanceOf.disconnect()
-            }
-        }
     }
 
     override fun onConnected() {

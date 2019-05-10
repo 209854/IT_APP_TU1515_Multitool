@@ -11,20 +11,22 @@ import java.util.ArrayList
 
 import java.lang.Thread.*
 
-class ConnectionManager private constructor() {
+object ConnectionManager  {
 
     private var state: ConnectionState? = null
 
     private val listeners = ArrayList<ConnectionManagerListener>()
     private var pw: PrintWriter? = null
+    private val TAG = javaClass.canonicalName
+
 
     fun attemptConnection() {
         if (state == ConnectionState.CONNECTING || state == ConnectionState.CONNECTED) {
             return
         }
 
-        val host = Settings.instanceOf.host
-        val port = Settings.instanceOf.port
+        val host = Settings.host
+        val port = Settings.port
 
         Log.i(TAG, String.format("Attempting connection. Results will be communicated to %s listeners", listeners.size))
         this.state = ConnectionState.CONNECTING
@@ -83,9 +85,4 @@ class ConnectionManager private constructor() {
         }
     }
 
-    companion object {
-        private val TAG = ConnectionManager::class.java!!.getCanonicalName()
-
-        val instanceOf = ConnectionManager()
-    }
 }
