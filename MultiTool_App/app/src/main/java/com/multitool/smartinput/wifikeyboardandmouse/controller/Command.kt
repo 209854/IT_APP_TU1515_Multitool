@@ -1,9 +1,12 @@
 package com.multitool.smartinput.wifikeyboardandmouse.controller
 
+import com.google.gson.Gson
+
 class Command private constructor(val type: CommandType, val value: CommandValue?) {
 
     override fun toString(): String {
-        return String.format("{\"type\": \"%s\", \"value\": %s}", type, value)
+        return Gson().toJson(this,javaClass)
+
     }
 
     companion object {

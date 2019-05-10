@@ -7,11 +7,12 @@ import com.multitool.smartinput.wifikeyboardandmouse.connector.ConnectionManager
 import com.multitool.smartinput.wifikeyboardandmouse.controller.CommandType
 import com.multitool.smartinput.wifikeyboardandmouse.utils.CommandQueue
 
-class MessageSender private constructor() : ConnectionManagerListener {
+object MessageSender : ConnectionManagerListener {
     private var connected = false
+    private const val TAG = "MessageSender"
 
     init {
-        ConnectionManager.instanceOf.addConnectionManagerListener(this)
+        ConnectionManager.addConnectionManagerListener(this)
     }
 
     override fun onConnected() {
@@ -35,19 +36,14 @@ class MessageSender private constructor() : ConnectionManagerListener {
                 if (!connected) {
                     continue
                 }
-                val command = CommandQueue.instance.pop()
+                val command = CommandQueue.pop()
                 if (command.type == CommandType.NO_OP) {
                     continue
                 }
-                ConnectionManager.instanceOf.sendMessage(command.toString())
+                ConnectionManager.sendMessage(command.toString())
             }
         }).start()
     }
 
-    companion object {
 
-        private val TAG = MessageSender::class.java.canonicalName
-
-        val instance = MessageSender()
-    }
 }
