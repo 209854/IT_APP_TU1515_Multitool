@@ -11,25 +11,25 @@ class GestureTap : GestureDetector.SimpleOnGestureListener() {
 
     override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
         if (e2.pointerCount == 1) {
-            CommandQueue.instance.push(Command.of(CommandType.MOUSE_MOVE, MoveValue.of(distanceX, distanceY)))
+            CommandQueue.push(Command.of(CommandType.MOUSE_MOVE, MoveValue.of(distanceX, distanceY)))
         } else {
-            CommandQueue.instance.push(Command.of(CommandType.MOUSE_SCROLL, MoveValue.of(distanceX, distanceY)))
+            CommandQueue.push(Command.of(CommandType.MOUSE_SCROLL, MoveValue.of(distanceX, distanceY)))
         }
         return true
     }
 
     override fun onDoubleTap(e: MotionEvent): Boolean {
-        CommandQueue.instance.push(Command.of(CommandType.MOUSE_DOUBLE_CLICK, null))
+        CommandQueue.push(Command.of(CommandType.MOUSE_DOUBLE_CLICK, null))
         return true
     }
 
     override fun onLongPress(e: MotionEvent) {
         super.onLongPress(e)
-        CommandQueue.instance.push(Command.of(CommandType.MOUSE_RIGHT_CLICK, null))
+        CommandQueue.push(Command.of(CommandType.MOUSE_RIGHT_CLICK, null))
     }
 
     override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-        CommandQueue.instance.push(Command.of(CommandType.MOUSE_LEFT_CLICK, null))
+        CommandQueue.push(Command.of(CommandType.MOUSE_LEFT_CLICK, null))
         return true
     }
 }

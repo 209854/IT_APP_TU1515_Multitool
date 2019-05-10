@@ -6,7 +6,9 @@ import com.multitool.smartinput.wifikeyboardandmouse.controller.Command
 
 import java.util.ArrayList
 
-class CommandQueue private constructor() {
+object CommandQueue  {
+    private val TAG = javaClass.canonicalName
+    private val commands = ArrayList<Command>()
 
     fun push(command: Command) {
         commands.add(command)
@@ -17,13 +19,5 @@ class CommandQueue private constructor() {
         return if (commands.size == 0) {
             Command.noOp()
         } else commands.removeAt(0)
-    }
-
-    companion object {
-        private val TAG = CommandQueue::class.java!!.getCanonicalName()
-
-        val instance = CommandQueue()
-
-        private val commands = ArrayList<Command>()
     }
 }
