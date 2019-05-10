@@ -1,19 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/touch_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
-    android:id="@+id/touch_screen"
+    android:addStatesFromChildren="true"
+    android:background="#000000"
     tools:context="com.multitool.smartinput.wifikeyboardandmouse.FullscreenActivity">
-
-
     <Button
-        android:layout_alignParentBottom="true"
         android:id="@+id/keyboard_toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="-12dp"
         android:layout_marginLeft="-12dp"
         android:layout_marginRight="-2dp"
@@ -23,15 +23,76 @@
         android:text="@string/keyboard" />
 
     <Button
-        android:layout_alignParentBottom="true"
         android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="-18dp"
-        android:layout_marginRight="-18dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="-5dp"
+        android:layout_marginRight="-5dp"
+        android:layout_marginBottom="0dp"
         android:drawableStart="@drawable/settings"
         android:drawableLeft="@drawable/settings"
         android:text="Settings" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="115dp"
+        android:layout_height="81dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="-17dp"
+        android:layout_marginLeft="-17dp"
+        android:layout_marginTop="0dp"
+        app:srcCompat="@drawable/lsign" />
+
+    <ImageView
+        android:layout_width="115dp"
+        android:layout_height="81dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="-17dp"
+        android:layout_marginRight="-17dp"
+        android:layout_marginTop="0dp"
+        android:rotation="90"
+        app:srcCompat="@drawable/lsign" />
+
+    <ImageView
+        android:layout_width="115dp"
+        android:layout_height="81dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="284dp"
+        android:layout_marginLeft="284dp"
+        android:layout_marginEnd="-15dp"
+        android:layout_marginRight="-15dp"
+        android:layout_marginBottom="42dp"
+        android:rotation="180"
+        app:srcCompat="@drawable/lsign" />
+
+    <ImageView
+        android:layout_width="115dp"
+        android:layout_height="81dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-18dp"
+        android:layout_marginLeft="-18dp"
+        android:layout_marginTop="284dp"
+        android:layout_marginBottom="41dp"
+        android:rotation="270"
+        app:srcCompat="@drawable/lsign" />
+
+    <ImageView
+        android:layout_width="81dp"
+        android:layout_height="62dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="135dp"
+        android:rotation="270"
+        app:srcCompat="@drawable/plus" />
+
 </RelativeLayout>
