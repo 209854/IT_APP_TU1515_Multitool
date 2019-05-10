@@ -6,33 +6,32 @@
     android:id="@+id/touch_screen"
     tools:context="com.multitool.smartinput.wifikeyboardandmouse.FullscreenActivity">
 
-    <RelativeLayout
+
+    <Button
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/keyboard_toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="-12dp"
+        android:layout_marginLeft="-12dp"
+        android:layout_marginRight="-2dp"
+        android:layout_toLeftOf="@+id/settings_button"
+        android:drawableStart="@drawable/keyboard"
+        android:drawableLeft="@drawable/keyboard"
+        android:text="@string/keyboard" />
 
-        <Button
-            android:id="@+id/keyboard_toggle"
-            android:layout_toLeftOf="@+id/settings_button"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/keyboard"
-            android:drawableLeft="@drawable/keyboard"
-            android:text="@string/keyboard"/>
-
-        <Button
-            android:id="@+id/settings_button"
-            android:layout_alignParentEnd="true"
-            android:text="Settings"
-            android:drawableStart="@drawable/settings"
-            android:drawableLeft="@drawable/settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true" />
-
-    </RelativeLayout>
-
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="-18dp"
+        android:layout_marginRight="-18dp"
+        android:drawableStart="@drawable/settings"
+        android:drawableLeft="@drawable/settings"
+        android:text="Settings" />
 </RelativeLayout>
