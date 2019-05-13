@@ -1,9 +1,7 @@
 package multitool.server
 
-import java.awt.AWTException
-import java.awt.MouseInfo
-import java.awt.Point
-import java.awt.Robot
+import org.json.JSONObject
+import java.awt.*
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.io.BufferedReader
@@ -11,12 +9,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.net.InetAddress
-import java.net.NetworkInterface
 import java.net.ServerSocket
-import java.net.Socket
-import java.util.Enumeration
+import javax.swing.*
 
-import org.json.JSONObject
 
 object Main {
 
@@ -24,6 +19,84 @@ object Main {
 
     @Throws(IOException::class, AWTException::class)
     @JvmStatic
+    fun main(args: Array<String>)
+    {
+        val ipLabel = JLabel("Local IP")
+        val ipArea = JTextArea()
+        val socketLabel = JLabel("Socket")
+        val socketArea = JTextArea()
+        val connectedArea = JTextArea()
+
+        ipLabel.setBounds(50,10,120,20)
+        ipArea.setBounds(50,30,120,30)
+        ipArea.border = BorderFactory.createLineBorder(Color.BLACK, 1)
+        ipArea.isEditable = false
+
+        socketLabel.setBounds(50,60,120,20)
+        socketArea.setBounds(50,80,120,30)
+        socketArea.border = BorderFactory.createLineBorder(Color.BLACK, 1)
+
+        connectedArea.setBounds(50,120,120,30)
+        connectedArea.border = BorderFactory.createLineBorder(Color.BLACK, 1)
+        connectedArea.text = "Disconnected"
+        connectedArea.background = Color.RED
+
+        val frame = JFrame("MultiTool Server")
+        val pane = JPanel()
+        pane.layout = null
+        pane.add(ipArea)
+        pane.add(ipLabel)
+        pane.add(socketArea)
+        pane.add(socketLabel)
+        pane.add(connectedArea)
+        frame.contentPane.add(pane)
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        frame.setSize(Dimension(300, 200))
+        frame.setLocationRelativeTo(null)
+        frame.setVisible(true)
+
+        robot = Robot()
+
+        val server = ServerSocket(9999)
+        socketArea.append(server.localPort.toString())
+        val address = InetAddress.getLocalHost()
+        val ip = address.hostAddress
+        ipArea.append(ip)
+        while (true) {
+            val socket = server.accept()
+            println("Connection establised")
+            connectedArea.text = "Connected"
+            connectedArea.background = Color.GREEN
+            val inputStream = socket.getInputStream()
+            handleSocketConnection(inputStream)
+        }
+
+    }
+
+    class KotlinSwingSimpleEx(title: String) : JFrame() {
+
+        init {
+            createUI(title)
+        }
+
+        private fun createUI(title: String) {
+
+            setTitle(title)
+            val ipArea = JTextArea()
+            ipArea.setBounds(20,20,100,20)
+
+            val address = InetAddress.getLocalHost()
+            val ip = address.hostAddress
+            ipArea.append(ip)
+
+            add(ipArea)
+            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+            setSize(300, 200)
+            setLocationRelativeTo(null)
+        }
+    }
+
+    /*
     fun main(args: Array<String>) {
         val server = ServerSocket(9999)
         robot = Robot()
@@ -49,7 +122,7 @@ object Main {
             handleSocketConnection(inputStream)
         }
     }
-
+*/
     @Throws(IOException::class)
     private fun handleSocketConnection(inputStream: InputStream) {
         Thread {
