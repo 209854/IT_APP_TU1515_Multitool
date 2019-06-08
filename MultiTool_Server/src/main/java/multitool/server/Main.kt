@@ -31,10 +31,12 @@ object Main {
     val startedArea = JTextArea()
     val connectedArea = JTextArea()
     val startButton = JButton("Start Server")
+    val thread = SimpleThread()
 
     class SimpleThread: Thread() {
         public override fun run() {
             while (true) {
+
                 val socket = soc.accept()
                 println("Connection establised")
                 connectedArea.text = "Connected"
@@ -80,7 +82,6 @@ object Main {
                 var port = socketArea.getText().toInt();
                 soc.reuseAddress = true
                 soc.bind(InetSocketAddress(port))
-                val thread = SimpleThread()
                 thread.start()
 
             }
