@@ -1,12 +1,16 @@
 package com.multitool.smartinput.wifikeyboardandmouse
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.GestureDetector
 import android.view.KeyEvent
+import android.view.Window
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -33,8 +37,17 @@ class FullscreenActivity : AppCompatActivity(),  ConnectionManagerListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= 16) {
+            getWindow().setFlags(AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT, AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT)
+            getWindow().getDecorView().setSystemUiVisibility(3328)
+        }else{
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        }   ;
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fullscreen)
+
         this.context = this
         detector = GestureDetector(this, GestureTap())
 

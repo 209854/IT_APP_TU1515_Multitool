@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MultiTool</string>
 
-    <string name="dummy_content">Multi\nTool</string>
+    <string name="dummy_content">MultiTool</string>
     <string name="keyboard">Keyboard</string>
     <string name="host">Host</string>
     <string name="port">Port</string>
