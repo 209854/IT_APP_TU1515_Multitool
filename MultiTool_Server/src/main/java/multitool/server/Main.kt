@@ -13,6 +13,8 @@ import java.net.ServerSocket
 import javax.swing.*
 import java.awt.event.ActionListener
 import com.sun.java.accessibility.util.AWTEventMonitor.addActionListener
+import redlaboratory.jvjoyinterface.VJoy
+import redlaboratory.jvjoyinterface.VjdStat
 import java.awt.event.ActionEvent
 import java.net.InetSocketAddress
 
@@ -22,6 +24,9 @@ public class Main{
 object Main {
 
     private var robot: Robot? = null
+    private val vJoy: VJoy = VJoy()
+    private val gameButtons: Array<Boolean> = Array(8) { i -> false }
+    private val dPad = mutableMapOf("up" to false, "down" to false, "left" to false, "right" to false)
     val soc = ServerSocket()
 
     val ipLabel = JLabel("Local IP")
@@ -197,7 +202,68 @@ object Main {
                     val value = json.getJSONObject("value")
                     //				System.out.println(value);
                     val keyCode = value.getInt("keyCode")
-                    if (keyCode != 0)
+
+                    if (keyCode in '1'.toInt()..'8'.toInt()) {
+                        //GAMEPAD BUTTONS
+                        val button = keyCode.toChar().toString().toInt()
+                        val rID = 1
+                        val status = vJoy.getVJDStatus(rID)
+                        if (status == VjdStat.VJD_STAT_OWN || status == VjdStat.VJD_STAT_FREE && !vJoy.acquireVJD(rID)) {
+                            println("Failed to acquire vJoy device number $rID")
+                        } else {
+                            println("Acquired: vJoy device number $rID")
+                        }
+                        val butVal = gameButtons[button - 1]
+                        vJoy.setBtn(!butVal, rID, button)
+                        gameButtons[button - 1] = !butVal
+
+                    }
+                    else if (keyCode.toChar() in arrayOf('w', 's', 'a', 'd')) {
+                        //GAMEPAD AXES
+                        println(keyCode.toChar())
+                        val rID = 1
+                        val status = vJoy.getVJDStatus(rID)
+                        if (status == VjdStat.VJD_STAT_OWN || status == VjdStat.VJD_STAT_FREE && !vJoy.acquireVJD(rID)) {
+                            println("Failed to acquire vJoy device number $rID")
+                        } else {
+                            println("Acquired: vJoy device number $rID")
+                        }
+                        val mapDirection = mapOf('w' to "up", 's' to "down", 'a' to "left", 'd' to "right")
+                        val direction = mapDirection[keyCode.toChar()]
+                        val dPadValue: Boolean = this.dPad[direction] ?: true
+                        when (direction) {
+                            "up" -> {
+                                if (dPadValue)
+                                    vJoy.setAxis(VJoy.AXIS_MID_VALUE.toLong(), rID, VJoy.HID_USAGE_Y)
+                                else
+                                    vJoy.setAxis(VJoy.AXIS_MIN_VALUE.toLong(), rID, VJoy.HID_USAGE_Y)
+                                this.dPad[direction] = !dPadValue
+                            }
+                            "down" -> {
+                                if (dPadValue)
+                                    vJoy.setAxis(VJoy.AXIS_MID_VALUE.toLong(), rID, VJoy.HID_USAGE_Y)
+                                else
+                                    vJoy.setAxis(VJoy.AXIS_MAX_VALUE.toLong(), rID, VJoy.HID_USAGE_Y)
+                                this.dPad[direction] = !dPadValue
+                            }
+                            "left" -> {
+                                if (dPadValue)
+                                    vJoy.setAxis(VJoy.AXIS_MID_VALUE.toLong(), rID, VJoy.HID_USAGE_X)
+                                else
+                                    vJoy.setAxis(VJoy.AXIS_MIN_VALUE.toLong(), rID, VJoy.HID_USAGE_X)
+                                this.dPad[direction] = !dPadValue
+                            }
+                            "right" -> {
+                                if (dPadValue)
+                                    vJoy.setAxis(VJoy.AXIS_MID_VALUE.toLong(), rID, VJoy.HID_USAGE_X)
+                                else
+                                    vJoy.setAxis(VJoy.AXIS_MAX_VALUE.toLong(), rID, VJoy.HID_USAGE_X)
+                                this.dPad[direction] = !dPadValue
+                            }
+                        }
+                    }
+                    //TODO remove "else" keyword after proper gamepad messages are created
+                    else if (keyCode != 0)
                     {
                         val isShiftPressed = value.getBoolean("shift")
                         val event = KeyEvent.getExtendedKeyCodeForChar(keyCode)
@@ -211,10 +277,17 @@ object Main {
                             robot!!.keyRelease(KeyEvent.VK_SHIFT)
                         }
                     }
-                    if (keyCode==0){
+                    //TODO remove "else" keyword after proper gamepad messages are created
+                    else if (keyCode==0){
                         robot?.keyPress(KeyEvent.VK_BACK_SPACE)
                         robot?.keyRelease(KeyEvent.VK_BACK_SPACE)
                     }
+                }
+                "GAMEPAD_MOVE" -> {
+                    val value = json.getJSONObject("value")
+                }
+                "GAMEPAD_BUTTON" -> {
+                    val value = json.getInt("value")
                 }
             }
         }.start()
