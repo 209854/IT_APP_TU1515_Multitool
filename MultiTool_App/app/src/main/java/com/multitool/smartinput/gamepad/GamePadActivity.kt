@@ -48,6 +48,13 @@ class GamePadActivity : AppCompatActivity(), ConnectionManagerListener {
         settings_button.setOnClickListener {
             openSettingsDialog()
         }
+        touch_sink.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                CommandQueue.push(Command.of(CommandType.GAME_PAD_MOVE, JoysticValue()))
+            }
+            analogStick.dispatchTouchEvent(event)
+            return@setOnTouchListener true
+        }
         analogStick.setOnMoveListener { angle, strength ->
 
 
