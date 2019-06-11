@@ -1,10 +1,11 @@
 package com.multitool.main
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.multitool.smartinput.gamepad.GamePadActivity
 import com.multitool.smartinput.wifikeyboardandmouse.FullscreenActivity
 import com.multitool.smartinput.wifikeyboardandmouse.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -67,6 +68,11 @@ class MainAcitivity : AppCompatActivity() {
 
     fun boardAndMouse(view: View) {
         val intent = Intent(this, FullscreenActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun gamePad(view: View) {
+        val intent = Intent(this, GamePadActivity::class.java)
         startActivity(intent)
     }
 
