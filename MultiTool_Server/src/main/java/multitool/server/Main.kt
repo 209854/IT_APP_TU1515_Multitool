@@ -9,6 +9,7 @@ import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -207,6 +208,29 @@ public class Main {
                         val y = location.getY() - dy
 
                         robot!!.mouseMove(x.toInt(), y.toInt())
+                    }
+                    "KEYBOARD_INPUT" -> {
+                        val value = json.getJSONObject("value")
+                        //				System.out.println(value);
+                        val keyCode = value.getInt("keyCode")
+                        if (keyCode != 0)
+                        {
+                            val isShiftPressed = value.getBoolean("shift")
+                            val event = KeyEvent.getExtendedKeyCodeForChar(keyCode)
+
+                            if (isShiftPressed) {
+                                robot!!.keyPress(KeyEvent.VK_SHIFT)
+                            }
+                            robot!!.keyPress(event)
+                            robot!!.keyRelease(event)
+                            if (isShiftPressed) {
+                                robot!!.keyRelease(KeyEvent.VK_SHIFT)
+                            }
+                        }
+                        if (keyCode==0){
+                            robot?.keyPress(KeyEvent.VK_BACK_SPACE)
+                            robot?.keyRelease(KeyEvent.VK_BACK_SPACE)
+                        }
                     }
                     "GAME_PAD_MOVE" -> {
                         val value = json.getJSONObject("value")
