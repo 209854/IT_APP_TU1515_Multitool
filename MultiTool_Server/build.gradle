@@ -32,6 +32,10 @@ dependencies {
 
     implementation 'org.json:json:20171018'
 
+    implementation 'junit:junit:4.12'
+    
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.4.0'
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
